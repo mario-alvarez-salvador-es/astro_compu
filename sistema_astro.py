@@ -16,11 +16,11 @@ class astro():
 
     def set_position(self, r):
         "Cambiamos posicion"
-        self.r = r
+        self.r = np.array(r)
 
     def set_speed(self, v):
         "Cambiamos velocidad"
-        self.v = v
+        self.v = np.array(v)
 
     def __str__(self):
         string = f"Astro: {self.name}\n"
@@ -40,18 +40,12 @@ class astro_system():
     
     def add_astros(self, *astros):
         "Añadimos los astros que queramos"
-        self.astros.append(*astros)
+        self.astros += astros
         self.mass_astros = filter(lambda astro: astro.m > 0, self.astros)
 
     def calculate_g(self, r):
         "Calculamos g (aceleracion de la gravedad en ese punto)"
-        return sum 
-        (
-            np.array
-            (
-            [astro.m/np.dot(astro.r, r) for astro in self.mass_astros]
-            )
-        ) *-4*np.pi*np.pi
+        return sum([astro.m*(astro.r-r)/np.dot(astro.r, r)**(2/3) for astro in self.mass_astros])*-4*np.pi*np.pi
 
     def rk4(self, t, r, v, dt):
         "Runge kutta 4"
