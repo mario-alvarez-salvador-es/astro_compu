@@ -71,20 +71,6 @@ class astro_system():
         return 4*np.pi*np.pi*total_g
 
     def move_astro_rk4(self, astro, dt):
-        # k1 = dt * astro.v
-        # l1 = dt * self.calculate_g(astro.r, astro)
-        # k2 = dt * (astro.v+.5*l1)
-        # l2 = dt * self.calculate_g(astro.r+0.5*k1, astro)
-        # k3 = dt * dt*(astro.v + 0.5*l2)
-        # l3 = dt * self.calculate_g(astro.r+0.5*k2, astro)
-        # k4 = dt *(astro.v+l3)
-        # l4 = dt * self.calculate_g(astro.r+k3, astro)
-
-        # self.t += dt
-        # astro.update_speed(astro.v + 1/6*(l1+2*l2+2*l3+l4))
-        # astro.update_position(astro.r + 1/6*(k1+2*k2+2*k3+k4))
-        # astro.update_time(self.t)
-
         k1=dt*astro.v
         l1=dt*self.calculate_g(astro.r, astro)
         k2=dt*(astro.v+l1/2)
@@ -93,34 +79,33 @@ class astro_system():
         l3=dt*self.calculate_g(astro.r+k2/2, astro)
         k4=dt*(astro.v+l3)
         l4=dt*self.calculate_g(astro.r+k3, astro)
-        # x+=(k1+2*k2+2*k3+k4)/6;
-        # v+=(l1+2*l2+2*l3+l4)/6;
-        self.t += dt
+        
         astro.update_speed(astro.v + (l1+2*l2+2*l3+l4)/6)
         astro.update_position(astro.r + (k1+2*k2+2*k3+k4)/6)
-        astro.update_time(self.t)
+        astro.update_time(self.t + dt)
     
     def move_astros_rk4(self, dt):
         "Mueve los astros un periodo de tiempo dt rk4 mode"
         for astro in self.astros:
             if astro.movility:
                 self.move_astro_rk4(astro, dt)
+        self.t += dt
 
     def move_astro(self, astro, dt):
         "Mover un astro segun gravedad"
         v = astro.v + self.calculate_g(astro.r, astro) * dt
         r = astro.r + astro.v * dt
-        self.t = self.t + dt
 
         astro.update_speed(v)
         astro.update_position(r)
-        astro.update_time(self.t)
+        astro.update_time(self.t + dt)
 
     def move_astros(self, dt):
         "Mueve los astros un periodo de tiempo dt"
         for astro in self.astros:
             if astro.movility:
                 self.move_astro(astro, dt)
+        self.t += dt
 
     def simulate_system(self, t, dt, mode='euler'):
         "simula el sistema durante un tiempo total t y en tramos separados dt"
