@@ -66,8 +66,8 @@ class astro_system():
                 continue
             r_ij = astro.r-r # vector del punto al astro -urij
             # total_g +=  astro.m*r_ij/np.dot(r_ij, r_ij)**(3/2)
-            r = np.sqrt(np.dot(r_ij, r_ij))
-            total_g += astro.m * r_ij/r**3
+            r_ij_mod = np.sqrt(np.dot(r_ij, r_ij))
+            total_g += astro.m * r_ij/r_ij_mod**3
         return 4*np.pi*np.pi*total_g
 
     def move_astro_rk4(self, astro, dt):
